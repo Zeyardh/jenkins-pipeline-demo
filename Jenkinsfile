@@ -64,16 +64,26 @@ pipeline {
             echo 'Post-Execution: Cleaning up workspace and preparing environment for future builds.'
         }
         success {
-            mail to: 'zeyardh123suffian@gmail.com',
-                 subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                 body: "Good news! The job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has succeeded.",
-                 attachLog: true
+            script {
+                def logFile = "${env.WORKSPACE}/build-${env.BUILD_NUMBER}.log"
+                writeFile file: logFile, text: currentBuild.rawBuild.getLog(1000).join("\n")
+                mail to: 'zeyardh123suffian@gmail.com',
+                     subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                     body: "Good news! The job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has succeeded. Please find the logs attached.",
+                     attachLog: true,
+                     attachmentsPattern: logFile
+            }
         }
         failure {
-            mail to: 'zeyardh123suffian@gmail.com',
-                 subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                 body: "Unfortunately, the job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has failed. Please check the logs for more details.",
-                 attachLog: true
+            script {
+                def logFile = "${env.WORKSPACE}/build-${env.BUILD_NUMBER}.log"
+                writeFile file: logFile, text: currentBuild.rawBuild.getLog(1000).join("\n")
+                mail to: 'zeyardh123suffian@gmail.com',
+                     subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                     body: "Unfortunately, the job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has failed. Please check the logs attached.",
+                     attachLog: true,
+                     attachmentsPattern: logFile
+            }
         }
     }
 }
