@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo 'Stage 1: Build - Building the code using a build automation tool.'
                 echo 'Task: Compile and package the code.'
-                echo 'Tool: Maven (e.g., command: mvn clean package'
+                echo 'Tool: Maven (e.g., command: mvn clean package)'
             }
         }
         
@@ -62,13 +62,18 @@ pipeline {
     post {
         always {
             echo 'Post-Execution: Cleaning up workspace and preparing environment for future builds.'
-            
         }
         success {
-            echo 'Pipeline completed successfully! All stages executed as expected.'
+            mail to: 'zeyardh123suffian@gmail.com',
+                 subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                 body: "Good news! The job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has succeeded.",
+                 attachLog: true
         }
         failure {
-            echo 'Pipeline failed! Review the logs to identify and fix the errors encountered.'
+            mail to: 'zeyardh123suffian@gmail.com',
+                 subject: "FAILURE: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                 body: "Unfortunately, the job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' has failed. Please check the logs for more details.",
+                 attachLog: true
         }
     }
 }
